@@ -74,26 +74,29 @@ A large number of duplicate rows was observed.
 
 ### Interpretation
 
-The duplicate observations were not automatically treated as erroneous records.
+The duplicate observations were initially retained because identical sensor and actuator values can legitimately occur in a time-series industrial control system.
 
-The SWaT dataset represents a **time-series industrial control system**, where sensor and actuator values can remain unchanged for multiple consecutive timestamps.
+However, after conducting experimental evaluations, it was confirmed that retaining the duplicate observations introduced **data leakage** between the training and testing data.
 
-Consequently, identical feature vectors can legitimately occur at different points in time.
+The duplicated observations caused identical or highly similar samples to appear across different data splits, resulting in unrealistically high model performance.
 
-For example, if a physical process remains stable, several consecutive observations may contain exactly the same sensor values.
+Therefore, the duplicate observations were removed from the dataset after experimental verification confirmed their contribution to data leakage. This preprocessing step was applied to ensure a more reliable and representative evaluation of the machine-learning models.
+
 
 ### Cleaning Decision
 
-The duplicate rows were therefore **retained** rather than removed.
+The duplicate rows were therefore **removed** after experimental evaluation confirmed that they were contributing to **data leakage**.
 
-This decision preserves:
+This decision was made to:
 
-* the original temporal structure,
-* the frequency of stable operating states,
-* the distribution of normal and attack observations,
-* and the realistic behavior of industrial process measurements.
+* prevent identical or highly similar observations from appearing across the training and testing sets,
+* avoid unrealistically optimistic model performance,
+* ensure a more reliable and representative evaluation,
+* and reduce the risk of the model benefiting from repeated observations rather than learning generalizable patterns.
 
-Removing these rows could artificially change the temporal distribution of the dataset and potentially remove meaningful operational states.
+Although duplicate sensor and actuator values can naturally occur in industrial time-series data, the experimental results showed that retaining these duplicates could compromise the validity of the model evaluation.
+
+Therefore, duplicate rows were removed as a data-cleaning step after their impact on data leakage was empirically verified.
 
 ---
 
